@@ -73,7 +73,7 @@ class QuasiNametag(Activity):
     def create_edit_screen(self, parent):
         self.edit_screen = lv.obj(parent)
         self.edit_screen.set_size(lv.pct(100), lv.pct(100))
-        self.edit_screen.set_style_pad_all(8, 0)
+        self.edit_screen.set_style_pad_all(0, 0)
         self.edit_screen.set_style_border_width(0, 0)
         self.edit_screen.set_style_outline_width(0, 0)
         self.edit_screen.set_style_radius(0, 0)
@@ -85,7 +85,7 @@ class QuasiNametag(Activity):
         self.name_ta.set_width(lv.pct(70))
         self.name_ta.set_one_line(True)
         self.name_ta.set_text(self.name_text)
-        self.name_ta.align(lv.ALIGN.TOP_LEFT, 22, 15)
+        self.name_ta.align(lv.ALIGN.TOP_LEFT, 22, 25)
         self.name_ta.add_event_cb(lambda *args: self.show_keyboard(), lv.EVENT.CLICKED, None)
 
         # Clear button (X) next to name field
@@ -105,7 +105,7 @@ class QuasiNametag(Activity):
         # Foreground color container - centered independently
         fg_cont = lv.obj(self.edit_screen)
         fg_cont.set_size(lv.pct(85), 32)
-        fg_cont.align(lv.ALIGN.TOP_MID, 0, 80)
+        fg_cont.align(lv.ALIGN.TOP_MID, 0, 85)
         fg_cont.set_flex_flow(lv.FLEX_FLOW.ROW)
         fg_cont.set_flex_align(lv.FLEX_ALIGN.SPACE_EVENLY, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
         fg_cont.set_style_pad_all(3, 0)
@@ -161,7 +161,7 @@ class QuasiNametag(Activity):
         self.keyboard = MposKeyboard(self.edit_screen)
         self.keyboard.align(lv.ALIGN.BOTTOM_MID, 0, 0)
         self.keyboard.set_textarea(self.name_ta)
-        self.keyboard.set_style_min_height(165, 0)
+        self.keyboard.set_style_min_height(175, 0)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.READY, None)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.CANCEL, None)
         self.keyboard.add_flag(lv.obj.FLAG.HIDDEN)
