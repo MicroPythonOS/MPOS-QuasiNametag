@@ -2,6 +2,8 @@ from mpos.apps import Activity
 import mpos.ui
 import mpos.ui.anim
 import mpos.ui.focus_direction
+import mpos.ui.theme
+from mpos.ui.keyboard import CustomKeyboard
 import lvgl as lv
 
 class QuasiNametag(Activity):
@@ -66,18 +68,12 @@ class QuasiNametag(Activity):
         self.edit_screen.set_size(lv.pct(100), lv.pct(100))
         self.edit_screen.set_style_pad_all(8, 0)
 
-        # Title
-        title = lv.label(self.edit_screen)
-        title.set_text("Nametag Editor")
-        title.align(lv.ALIGN.TOP_MID, 0, 5)
-        title.set_style_text_font(lv.font_montserrat_16, 0)
-
         # Name input textarea (slightly narrower to make room for clear button)
         self.name_ta = lv.textarea(self.edit_screen)
         self.name_ta.set_width(lv.pct(70))
         self.name_ta.set_one_line(True)
         self.name_ta.set_text(self.name_text)
-        self.name_ta.align(lv.ALIGN.TOP_LEFT, 22, 50)
+        self.name_ta.align(lv.ALIGN.TOP_LEFT, 22, 0)
         self.name_ta.add_event_cb(lambda *args: self.show_keyboard(), lv.EVENT.CLICKED, None)
 
         # Clear button (X) next to name field
@@ -149,11 +145,11 @@ class QuasiNametag(Activity):
         confirm_label.set_text("Show Nametag")
         confirm_label.center()
 
-        # Keyboard (hidden by default)
-        self.keyboard = lv.keyboard(self.edit_screen)
+        # Custom keyboard with enhanced layout (hidden by default)
+        self.keyboard = CustomKeyboard(self.edit_screen)
         self.keyboard.align(lv.ALIGN.BOTTOM_MID, 0, 0)
         self.keyboard.set_textarea(self.name_ta)
-        self.keyboard.set_style_max_height(120, 0)
+        self.keyboard.set_style_min_height(165, 0)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.READY, None)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.CANCEL, None)
         self.keyboard.add_flag(lv.obj.FLAG.HIDDEN)
