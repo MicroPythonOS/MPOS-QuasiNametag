@@ -3,6 +3,7 @@ import mpos.config
 import mpos.ui
 import mpos.ui.anim
 import mpos.ui.focus_direction
+import mpos.ui.theme
 import lvgl as lv
 
 class QuasiNametag(Activity):
@@ -161,6 +162,7 @@ class QuasiNametag(Activity):
         self.keyboard.align(lv.ALIGN.BOTTOM_MID, 0, 0)
         self.keyboard.set_textarea(self.name_ta)
         self.keyboard.set_style_max_height(120, 0)
+        mpos.ui.theme.fix_keyboard_button_style(self.keyboard)  # Fix button visibility in light mode
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.READY, None)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.CANCEL, None)
         self.keyboard.add_flag(lv.obj.FLAG.HIDDEN)
