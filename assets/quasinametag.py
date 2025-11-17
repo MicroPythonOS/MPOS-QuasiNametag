@@ -3,7 +3,6 @@ import mpos.config
 import mpos.ui
 import mpos.ui.anim
 import mpos.ui.focus_direction
-import mpos.ui.theme
 from mpos.ui.keyboard import MposKeyboard
 import lvgl as lv
 
@@ -74,11 +73,11 @@ class QuasiNametag(Activity):
         self.edit_screen = lv.obj(parent)
         self.edit_screen.set_size(lv.pct(100), lv.pct(100))
         self.edit_screen.set_style_pad_all(0, 0)
+
+        # Remove border and outline
         self.edit_screen.set_style_border_width(0, 0)
         self.edit_screen.set_style_outline_width(0, 0)
         self.edit_screen.set_style_radius(0, 0)
-        self.edit_screen.set_scrollbar_mode(lv.SCROLLBAR_MODE.OFF)
-        self.edit_screen.set_scroll_dir(lv.DIR.NONE)
 
         # Name input textarea (slightly narrower to make room for clear button)
         self.name_ta = lv.textarea(self.edit_screen)
