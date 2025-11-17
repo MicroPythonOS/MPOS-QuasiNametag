@@ -161,7 +161,6 @@ class QuasiNametag(Activity):
         self.keyboard = MposKeyboard(self.edit_screen)
         self.keyboard.align(lv.ALIGN.BOTTOM_MID, 0, 0)
         self.keyboard.set_textarea(self.name_ta)
-        self.keyboard.set_style_min_height(175, 0)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.READY, None)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.CANCEL, None)
         self.keyboard.add_flag(lv.obj.FLAG.HIDDEN)
