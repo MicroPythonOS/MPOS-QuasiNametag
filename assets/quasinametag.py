@@ -3,6 +3,7 @@ import mpos.config
 import mpos.ui
 import mpos.ui.anim
 import mpos.ui.focus_direction
+from mpos.ui.keyboard import MposKeyboard
 import lvgl as lv
 
 class QuasiNametag(Activity):
@@ -71,20 +72,19 @@ class QuasiNametag(Activity):
     def create_edit_screen(self, parent):
         self.edit_screen = lv.obj(parent)
         self.edit_screen.set_size(lv.pct(100), lv.pct(100))
-        self.edit_screen.set_style_pad_all(8, 0)
+        self.edit_screen.set_style_pad_all(0, 0)
 
-        # Title
-        title = lv.label(self.edit_screen)
-        title.set_text("Nametag Editor")
-        title.align(lv.ALIGN.TOP_MID, 0, 5)
-        title.set_style_text_font(lv.font_montserrat_16, 0)
+        # Remove border and outline
+        self.edit_screen.set_style_border_width(0, 0)
+        self.edit_screen.set_style_outline_width(0, 0)
+        self.edit_screen.set_style_radius(0, 0)
 
         # Name input textarea (slightly narrower to make room for clear button)
         self.name_ta = lv.textarea(self.edit_screen)
         self.name_ta.set_width(lv.pct(70))
         self.name_ta.set_one_line(True)
         self.name_ta.set_text(self.name_text)
-        self.name_ta.align(lv.ALIGN.TOP_LEFT, 22, 50)
+        self.name_ta.align(lv.ALIGN.TOP_LEFT, 22, 25)
         self.name_ta.add_event_cb(lambda *args: self.show_keyboard(), lv.EVENT.CLICKED, None)
 
         # Clear button (X) next to name field
@@ -104,7 +104,7 @@ class QuasiNametag(Activity):
         # Foreground color container - centered independently
         fg_cont = lv.obj(self.edit_screen)
         fg_cont.set_size(lv.pct(85), 32)
-        fg_cont.align(lv.ALIGN.TOP_MID, 0, 115)
+        fg_cont.align(lv.ALIGN.TOP_MID, 0, 85)
         fg_cont.set_flex_flow(lv.FLEX_FLOW.ROW)
         fg_cont.set_flex_align(lv.FLEX_ALIGN.SPACE_EVENLY, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
         fg_cont.set_style_pad_all(3, 0)
@@ -150,17 +150,16 @@ class QuasiNametag(Activity):
         # Confirm button - positioned below background colors and centered
         self.confirm_button = lv.button(self.edit_screen)
         self.confirm_button.set_size(lv.pct(85), 40)
-        self.confirm_button.align_to(bg_cont, lv.ALIGN.OUT_BOTTOM_MID, 0, 20)
+        self.confirm_button.align_to(bg_cont, lv.ALIGN.OUT_BOTTOM_MID, 0, 15)
         self.confirm_button.add_event_cb(self.confirm_and_show_display, lv.EVENT.CLICKED, None)
         confirm_label = lv.label(self.confirm_button)
         confirm_label.set_text("Show Nametag")
         confirm_label.center()
 
-        # Keyboard (hidden by default)
-        self.keyboard = lv.keyboard(self.edit_screen)
+        # Custom keyboard with enhanced layout (hidden by default)
+        self.keyboard = MposKeyboard(self.edit_screen)
         self.keyboard.align(lv.ALIGN.BOTTOM_MID, 0, 0)
         self.keyboard.set_textarea(self.name_ta)
-        self.keyboard.set_style_max_height(120, 0)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.READY, None)
         self.keyboard.add_event_cb(lambda *args: self.hide_keyboard(), lv.EVENT.CANCEL, None)
         self.keyboard.add_flag(lv.obj.FLAG.HIDDEN)
