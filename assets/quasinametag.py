@@ -285,7 +285,7 @@ class QuasiNametag(Activity):
         self.display_label.set_style_text_color(lv.color_hex(self.fg_color), 0)
 
         # Use the largest available font size
-        self.display_label.set_style_text_font(lv.font_montserrat_30, 0)
+        self.display_label.set_style_text_font(lv.font_montserrat_48, 0)
 
         # Add generous letter spacing to make text appear larger and more spread out
         self.display_label.set_style_text_letter_space(10, 0)
