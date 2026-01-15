@@ -1,9 +1,8 @@
-from mpos.apps import Activity
+from mpos import Activity, MposKeyboard
 import mpos.config
 import mpos.ui
 import mpos.ui.anim
 import mpos.ui.focus_direction
-from mpos.ui.keyboard import MposKeyboard
 import lvgl as lv
 
 class QuasiNametag(Activity):
