@@ -187,7 +187,12 @@ class QuasiNametag(Activity):
 
         # Create a label for displaying the name
         self.display_label = lv.label(self.display_screen)
-        self.display_label.set_long_mode(lv.label.LONG_MODE.CLIP)
+        # self.display_label.set_long_mode(lv.label.LONG_MODE.CLIP)
+        # self.display_label.set_long_mode(lv.label.LONG_MODE.WRAP)
+        self.display_label.set_long_mode(lv.label.LONG_MODE.SCROLL_CIRCULAR)
+        self.display_label.set_width(lv.pct(100)) # Set width to 100% to enable wrapping
+        # self.display_label.set_height(lv.pct(100)) # this makes text not bigger
+        # self.display_label.set_width(10) # Set width to 10px wrapping to enable wrapping
         self.display_label.set_style_text_align(lv.TEXT_ALIGN.CENTER, 0)
 
     def show_keyboard(self):
@@ -290,7 +295,7 @@ class QuasiNametag(Activity):
         self.display_label.set_style_text_letter_space(10, 0)
 
         # Center the text
-        self.display_label.set_width(lv.SIZE_CONTENT)
+        # self.display_label.set_width(lv.SIZE_CONTENT)
         self.display_label.center()
 
     def global_key_handler(self, event):
