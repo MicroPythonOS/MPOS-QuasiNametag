@@ -1,9 +1,6 @@
-from mpos import Activity, MposKeyboard
-import mpos.config
-import mpos.ui
-import mpos.ui.anim
-import mpos.ui.focus_direction
 import lvgl as lv
+
+from mpos import Activity, InputManager, MposKeyboard, SharedPreferences, WidgetAnimator
 
 class QuasiNametag(Activity):
 
@@ -44,7 +41,7 @@ class QuasiNametag(Activity):
         container.add_event_cb(self.global_key_handler, lv.EVENT.KEY, None)
 
         print("Loading preferences...")
-        prefs = mpos.config.SharedPreferences("com.quasikili.quasinametag")
+        prefs = SharedPreferences("com.quasikili.quasinametag")
         self.name_text = prefs.get_string("name_text", self.name_text)
         self.fg_color = prefs.get_int("fg_color", self.fg_color)
         self.bg_color = prefs.get_int("bg_color", self.bg_color)
@@ -66,7 +63,7 @@ class QuasiNametag(Activity):
         # Set focus to display screen so it receives key events on initial load
         focusgroup = lv.group_get_default()
         if focusgroup:
-            mpos.ui.focus_direction.emulate_focus_obj(focusgroup, self.display_screen)
+            InputManager.emulate_focus_obj(focusgroup, self.display_screen)
 
     def create_edit_screen(self, parent):
         self.edit_screen = lv.obj(parent)
@@ -182,9 +179,6 @@ class QuasiNametag(Activity):
         if focusgroup:
             focusgroup.add_obj(self.display_screen)
 
-        # Debug: print all events
-        self.display_screen.add_event_cb(lambda e: mpos.ui.print_event(e), lv.EVENT.ALL, None)
-
         # Create a label for displaying the name
         self.display_label = lv.label(self.display_screen)
         # self.display_label.set_long_mode(lv.label.LONG_MODE.CLIP)
@@ -197,13 +191,13 @@ class QuasiNametag(Activity):
 
     def show_keyboard(self):
         self.confirm_button.add_flag(lv.obj.FLAG.HIDDEN)
-        mpos.ui.anim.smooth_show(self.keyboard)
+        WidgetAnimator.smooth_show(self.keyboard)
         focusgroup = lv.group_get_default()
         if focusgroup:
             focusgroup.focus_next()
 
     def hide_keyboard(self):
-        mpos.ui.anim.smooth_hide(self.keyboard)
+        WidgetAnimator.smooth_hide(self.keyboard)
         self.confirm_button.remove_flag(lv.obj.FLAG.HIDDEN)
 
     def clear_name(self, event):
@@ -271,10 +265,10 @@ class QuasiNametag(Activity):
         # Set focus to display screen so it receives key events
         focusgroup = lv.group_get_default()
         if focusgroup:
-            mpos.ui.focus_direction.emulate_focus_obj(focusgroup, self.display_screen)
+            InputManager.emulate_focus_obj(focusgroup, self.display_screen)
 
         print("Saving preferences...")
-        editor = mpos.config.SharedPreferences("com.quasikili.quasinametag").edit()
+        editor = SharedPreferences("com.quasikili.quasinametag").edit()
         editor.put_string("name_text", self.name_text)
         editor.put_int("fg_color", self.fg_color)
         editor.put_int("bg_color", self.bg_color)
