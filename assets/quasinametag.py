@@ -1,9 +1,6 @@
-from mpos import Activity, MposKeyboard
-import mpos.config
-import mpos.ui
-import mpos.ui.anim
-import mpos.ui.focus_direction
 import lvgl as lv
+
+from mpos import Activity, InputManager, MposKeyboard, SharedPreferences, WidgetAnimator
 
 class QuasiNametag(Activity):
 
@@ -38,13 +35,13 @@ class QuasiNametag(Activity):
     def onCreate(self):
         # Create a container to hold both screens
         container = lv.obj()
-        container.set_style_pad_all(0, 0)
+        container.set_style_pad_all(0, lv.PART.MAIN)
 
         # Add key event handler to container to catch all key events
         container.add_event_cb(self.global_key_handler, lv.EVENT.KEY, None)
 
         print("Loading preferences...")
-        prefs = mpos.config.SharedPreferences("com.quasikili.quasinametag")
+        prefs = SharedPreferences("com.quasikili.quasinametag")
         self.name_text = prefs.get_string("name_text", self.name_text)
         self.fg_color = prefs.get_int("fg_color", self.fg_color)
         self.bg_color = prefs.get_int("bg_color", self.bg_color)
@@ -66,17 +63,17 @@ class QuasiNametag(Activity):
         # Set focus to display screen so it receives key events on initial load
         focusgroup = lv.group_get_default()
         if focusgroup:
-            mpos.ui.focus_direction.emulate_focus_obj(focusgroup, self.display_screen)
+            InputManager.emulate_focus_obj(focusgroup, self.display_screen)
 
     def create_edit_screen(self, parent):
         self.edit_screen = lv.obj(parent)
         self.edit_screen.set_size(lv.pct(100), lv.pct(100))
-        self.edit_screen.set_style_pad_all(0, 0)
+        self.edit_screen.set_style_pad_all(0, lv.PART.MAIN)
 
         # Remove border and outline
-        self.edit_screen.set_style_border_width(0, 0)
-        self.edit_screen.set_style_outline_width(0, 0)
-        self.edit_screen.set_style_radius(0, 0)
+        self.edit_screen.set_style_border_width(0, lv.PART.MAIN)
+        self.edit_screen.set_style_outline_width(0, lv.PART.MAIN)
+        self.edit_screen.set_style_radius(0, lv.PART.MAIN)
 
         # Name input textarea (slightly narrower to make room for clear button)
         self.name_ta = lv.textarea(self.edit_screen)
@@ -106,7 +103,7 @@ class QuasiNametag(Activity):
         fg_cont.align(lv.ALIGN.TOP_MID, 0, 85)
         fg_cont.set_flex_flow(lv.FLEX_FLOW.ROW)
         fg_cont.set_flex_align(lv.FLEX_ALIGN.SPACE_EVENLY, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-        fg_cont.set_style_pad_all(3, 0)
+        fg_cont.set_style_pad_all(3, lv.PART.MAIN)
 
         # Foreground label - aligned to color container
         fg_label = lv.label(self.edit_screen)
@@ -118,8 +115,8 @@ class QuasiNametag(Activity):
         for color in self.colors:
             btn = lv.button(fg_cont)
             btn.set_size(16, 16)
-            btn.set_style_bg_color(lv.color_hex(color["value"]), 0)
-            btn.set_style_radius(5, 0)
+            btn.set_style_bg_color(lv.color_hex(color["value"]), lv.PART.MAIN)
+            btn.set_style_radius(5, lv.PART.MAIN)
             btn.add_event_cb(lambda e, c=color["value"]: self.set_fg_color(c), lv.EVENT.CLICKED, None)
             self.fg_color_buttons.append(btn)
 
@@ -129,7 +126,7 @@ class QuasiNametag(Activity):
         bg_cont.align_to(fg_cont, lv.ALIGN.OUT_BOTTOM_MID, 0, 30)
         bg_cont.set_flex_flow(lv.FLEX_FLOW.ROW)
         bg_cont.set_flex_align(lv.FLEX_ALIGN.SPACE_EVENLY, lv.FLEX_ALIGN.CENTER, lv.FLEX_ALIGN.CENTER)
-        bg_cont.set_style_pad_all(3, 0)
+        bg_cont.set_style_pad_all(3, lv.PART.MAIN)
 
         # Background label - aligned to color container
         bg_label = lv.label(self.edit_screen)
@@ -141,8 +138,8 @@ class QuasiNametag(Activity):
         for color in self.colors:
             btn = lv.button(bg_cont)
             btn.set_size(16, 16)
-            btn.set_style_bg_color(lv.color_hex(color["value"]), 0)
-            btn.set_style_radius(5, 0)
+            btn.set_style_bg_color(lv.color_hex(color["value"]), lv.PART.MAIN)
+            btn.set_style_radius(5, lv.PART.MAIN)
             btn.add_event_cb(lambda e, c=color["value"]: self.set_bg_color(c), lv.EVENT.CLICKED, None)
             self.bg_color_buttons.append(btn)
 
@@ -166,12 +163,12 @@ class QuasiNametag(Activity):
     def create_display_screen(self, parent):
         self.display_screen = lv.obj(parent)
         self.display_screen.set_size(lv.pct(100), lv.pct(100))
-        self.display_screen.set_style_pad_all(0, 0)
+        self.display_screen.set_style_pad_all(0, lv.PART.MAIN)
 
         # Remove border and outline
-        self.display_screen.set_style_border_width(0, 0)
-        self.display_screen.set_style_outline_width(0, 0)
-        self.display_screen.set_style_radius(0, 0)
+        self.display_screen.set_style_border_width(0, lv.PART.MAIN)
+        self.display_screen.set_style_outline_width(0, lv.PART.MAIN)
+        self.display_screen.set_style_radius(0, lv.PART.MAIN)
 
         # Make the entire display screen clickable to return to edit mode
         self.display_screen.add_flag(lv.obj.FLAG.CLICKABLE)
@@ -182,9 +179,6 @@ class QuasiNametag(Activity):
         if focusgroup:
             focusgroup.add_obj(self.display_screen)
 
-        # Debug: print all events
-        self.display_screen.add_event_cb(lambda e: mpos.ui.print_event(e), lv.EVENT.ALL, None)
-
         # Create a label for displaying the name
         self.display_label = lv.label(self.display_screen)
         # self.display_label.set_long_mode(lv.label.LONG_MODE.CLIP)
@@ -193,17 +187,17 @@ class QuasiNametag(Activity):
         self.display_label.set_width(lv.pct(100)) # Set width to 100% to enable wrapping
         # self.display_label.set_height(lv.pct(100)) # this makes text not bigger
         # self.display_label.set_width(10) # Set width to 10px wrapping to enable wrapping
-        self.display_label.set_style_text_align(lv.TEXT_ALIGN.CENTER, 0)
+        self.display_label.set_style_text_align(lv.TEXT_ALIGN.CENTER, lv.PART.MAIN)
 
     def show_keyboard(self):
         self.confirm_button.add_flag(lv.obj.FLAG.HIDDEN)
-        mpos.ui.anim.smooth_show(self.keyboard)
+        WidgetAnimator.smooth_show(self.keyboard)
         focusgroup = lv.group_get_default()
         if focusgroup:
             focusgroup.focus_next()
 
     def hide_keyboard(self):
-        mpos.ui.anim.smooth_hide(self.keyboard)
+        WidgetAnimator.smooth_hide(self.keyboard)
         self.confirm_button.remove_flag(lv.obj.FLAG.HIDDEN)
 
     def clear_name(self, event):
@@ -232,9 +226,9 @@ class QuasiNametag(Activity):
                 label.center()
                 # Set contrasting color for the checkmark
                 if color_info["value"] == 0x000000:  # Black background
-                    label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+                    label.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN)
                 else:
-                    label.set_style_text_color(lv.color_hex(0x000000), 0)
+                    label.set_style_text_color(lv.color_hex(0x000000), lv.PART.MAIN)
 
         # Update background color buttons
         for i, color_info in enumerate(self.colors):
@@ -248,9 +242,9 @@ class QuasiNametag(Activity):
                 label.center()
                 # Set contrasting color for the checkmark
                 if color_info["value"] == 0x000000:  # Black background
-                    label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+                    label.set_style_text_color(lv.color_hex(0xFFFFFF), lv.PART.MAIN)
                 else:
-                    label.set_style_text_color(lv.color_hex(0x000000), 0)
+                    label.set_style_text_color(lv.color_hex(0x000000), lv.PART.MAIN)
 
 
     def confirm_and_show_display(self, event):
@@ -271,10 +265,10 @@ class QuasiNametag(Activity):
         # Set focus to display screen so it receives key events
         focusgroup = lv.group_get_default()
         if focusgroup:
-            mpos.ui.focus_direction.emulate_focus_obj(focusgroup, self.display_screen)
+            InputManager.emulate_focus_obj(focusgroup, self.display_screen)
 
         print("Saving preferences...")
-        editor = mpos.config.SharedPreferences("com.quasikili.quasinametag").edit()
+        editor = SharedPreferences("com.quasikili.quasinametag").edit()
         editor.put_string("name_text", self.name_text)
         editor.put_int("fg_color", self.fg_color)
         editor.put_int("bg_color", self.bg_color)
@@ -282,17 +276,17 @@ class QuasiNametag(Activity):
 
     def update_display_screen(self):
         # Set background color
-        self.display_screen.set_style_bg_color(lv.color_hex(self.bg_color), 0)
+        self.display_screen.set_style_bg_color(lv.color_hex(self.bg_color), lv.PART.MAIN)
 
         # Set text and color
         self.display_label.set_text(self.name_text)
-        self.display_label.set_style_text_color(lv.color_hex(self.fg_color), 0)
+        self.display_label.set_style_text_color(lv.color_hex(self.fg_color), lv.PART.MAIN)
 
         # Use the largest available font size
-        self.display_label.set_style_text_font(lv.font_montserrat_48, 0)
+        self.display_label.set_style_text_font(lv.font_montserrat_48, lv.PART.MAIN)
 
         # Add generous letter spacing to make text appear larger and more spread out
-        self.display_label.set_style_text_letter_space(10, 0)
+        self.display_label.set_style_text_letter_space(10, lv.PART.MAIN)
 
         # Center the text
         # self.display_label.set_width(lv.SIZE_CONTENT)
