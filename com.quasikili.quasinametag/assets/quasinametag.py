@@ -1,6 +1,6 @@
 import lvgl as lv
 
-from mpos import Activity, InputManager, MposKeyboard, SharedPreferences, WidgetAnimator
+from mpos import Activity, DisplayMetrics, InputManager, MposKeyboard, SharedPreferences, WidgetAnimator
 
 class QuasiNametag(Activity):
 
@@ -181,13 +181,7 @@ class QuasiNametag(Activity):
 
         # Create a label for displaying the name
         self.display_label = lv.label(self.display_screen)
-        # self.display_label.set_long_mode(lv.label.LONG_MODE.CLIP)
-        # self.display_label.set_long_mode(lv.label.LONG_MODE.WRAP)
         self.display_label.set_long_mode(lv.label.LONG_MODE.SCROLL_CIRCULAR)
-        self.display_label.set_width(lv.pct(100)) # Set width to 100% to enable wrapping
-        # self.display_label.set_height(lv.pct(100)) # this makes text not bigger
-        # self.display_label.set_width(10) # Set width to 10px wrapping to enable wrapping
-        self.display_label.set_style_text_align(lv.TEXT_ALIGN.CENTER, lv.PART.MAIN)
 
     def show_keyboard(self):
         self.confirm_button.add_flag(lv.obj.FLAG.HIDDEN)
@@ -283,14 +277,23 @@ class QuasiNametag(Activity):
         self.display_label.set_style_text_color(lv.color_hex(self.fg_color), lv.PART.MAIN)
 
         # Use the largest available font size
-        self.display_label.set_style_text_font(lv.font_montserrat_48, lv.PART.MAIN)
+        self.display_label.set_style_text_font(lv.font_montserrat_28, lv.PART.MAIN)
+
+        # Scale up the nametag
+        style = lv.style_t()
+        style.init()
+        style.set_transform_scale(2*256) # double the size
+        self.display_label.set_width(round(DisplayMetrics.width()/2)) # compensate for the double size by setting it to 50% of the display width to obtain 100% display width
+        style.set_translate_x(-round(DisplayMetrics.width()/4)) # compensave to the double left margin
+        style.set_translate_y(-round(DisplayMetrics.width()/16)) # compensave to the double top margin
+        self.display_label.add_style(style, lv.PART.MAIN)
 
         # Add generous letter spacing to make text appear larger and more spread out
         self.display_label.set_style_text_letter_space(10, lv.PART.MAIN)
 
         # Center the text
-        # self.display_label.set_width(lv.SIZE_CONTENT)
-        self.display_label.center()
+        self.display_label.center() # vertical center
+        self.display_label.set_style_text_align(lv.TEXT_ALIGN.CENTER, lv.PART.MAIN)
 
     def global_key_handler(self, event):
         # Handle Enter key press when on display screen
